@@ -1,0 +1,21 @@
+{
+  "name": "primera-entrega",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node .src/app.js",
+    "stop": "taskkill /F /IM node.exe",
+    "dev": "nodemon .src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
