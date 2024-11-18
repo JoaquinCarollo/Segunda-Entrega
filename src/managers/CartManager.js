@@ -10,7 +10,7 @@ export default class CartsManager {
     this.#jsonFileName = "carts.json";
   }
   async $findCartById(cid) {
-    this.#carts;
+    this.#carts = await readJsonFile(paths.files, this.#jsonFileName);
     const cartFound = this.#carts.find((cart) => cart.id === Number(cid));
     if (!cartFound) {
       throw new ErrorManager("Error, carrito no encontrado", 404);
