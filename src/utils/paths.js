@@ -8,5 +8,7 @@ const paths = {
   root: ROOT_PATH,
   src: SRC_PATH,
   files: path.join(SRC_PATH, "files"),
+  public: path.join(SRC_PATH, "public"),
+  views: path.join(SRC_PATH, "views"),
 };
 export default paths;

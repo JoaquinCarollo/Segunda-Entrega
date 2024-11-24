@@ -1,0 +1,42 @@
+[
+	{
+		"id": 1,
+		"title": "Final fantasy",
+		"description": "Cloud Strife, un mercenario que se une al grupo Avalanche para luchar contra la corporación Shinra, mientras se enfrenta al enigmático Sephiroth, cuyo plan amenaza la existencia del planeta.",
+		"code": "tdd",
+		"price": 2900,
+		"status": true,
+		"stock": 19,
+		"category": "RPG, Aventura, Acción"
+	},
+	{
+		"id": 2,
+		"title": "Counter Strike 1.6",
+		"description": "Enfrenta a equipos de terroristas y antiterroristas en misiones de rescate de rehenes, colocación de bombas o eliminación de enemigos..",
+		"code": "cs16",
+		"price": 1700,
+		"status": true,
+		"stock": 33,
+		"category": "Shooter, Acción"
+	},
+	{
+		"id": 3,
+		"title": "Dragon Ball Z Sparking Zero",
+		"description": "Inspirado en el universo de Dragon Ball Z, con batallas en 3D, combates dinámicos y un amplio elenco de personajes emblemáticos",
+		"code": "dbzsz",
+		"price": 5500,
+		"status": true,
+		"stock": 14,
+		"category": "Lucha, Acción"
+	},
+	{
+		"id": 4,
+		"title": "EA SPORTS FC24",
+		"description": "El sucesor espiritual de la serie FIFA, desarrollado por EA Sports como su primer título bajo el nuevo nombre tras la separación de la licencia FIFA.",
+		"code": "easfc24",
+		"price": 6000,
+		"status": true,
+		"stock": 7,
+		"category": "Deportes"
+	}
+]

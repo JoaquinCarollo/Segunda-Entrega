@@ -5,7 +5,6 @@ import { convertToBoolean } from "../utils/converter.js";
 import ErrorManager from "./ErrorManager.js";
 
 export default class ProductsManager {
-  z;
   #jsonFileName;
   #products;
   constructor() {
