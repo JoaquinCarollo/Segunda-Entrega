@@ -92,6 +92,9 @@ export default class ProductsManager {
       const indexProduct = this.#products.findIndex(
         (product) => product.id === Number(pid)
       );
+      if (indexProduct < 0) {
+        throw new ErrorManager("Error, el producto a eliminar no existe", 400);
+      }
       this.#products.splice(indexProduct, 1);
       await writeJsonFile(paths.files, this.#jsonFileName, this.#products);
     } catch (error) {

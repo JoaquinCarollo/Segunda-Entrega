@@ -1,42 +1,102 @@
 [
 	{
 		"id": 1,
-		"title": "Final fantasy",
-		"description": "Cloud Strife, un mercenario que se une al grupo Avalanche para luchar contra la corporación Shinra, mientras se enfrenta al enigmático Sephiroth, cuyo plan amenaza la existencia del planeta.",
-		"code": "tdd",
-		"price": 2900,
-		"status": true,
-		"stock": 19,
-		"category": "RPG, Aventura, Acción"
+		"title": "Final Fantasy 7",
+		"description": "Vive las aventuras de Cloud Strife, un mercenario de Avalanche",
+		"code": "ff7",
+		"price": "1700",
+		"status": "on",
+		"stock": "22",
+		"category": "Aventura, Acción, RPG"
 	},
 	{
 		"id": 2,
 		"title": "Counter Strike 1.6",
-		"description": "Enfrenta a equipos de terroristas y antiterroristas en misiones de rescate de rehenes, colocación de bombas o eliminación de enemigos..",
+		"description": "El mejor juego de shooters que haya existido para la PC",
 		"code": "cs16",
-		"price": 1700,
-		"status": true,
-		"stock": 33,
+		"price": "900",
+		"status": "on",
+		"stock": "11",
 		"category": "Shooter, Acción"
 	},
 	{
 		"id": 3,
-		"title": "Dragon Ball Z Sparking Zero",
-		"description": "Inspirado en el universo de Dragon Ball Z, con batallas en 3D, combates dinámicos y un amplio elenco de personajes emblemáticos",
-		"code": "dbzsz",
-		"price": 5500,
-		"status": true,
-		"stock": 14,
-		"category": "Lucha, Acción"
+		"title": "Dragon Ball Sparking Zero",
+		"description": "El más popular juego de peleas hasta ahora",
+		"code": "dbsz",
+		"price": "8000",
+		"status": "off",
+		"stock": "7",
+		"category": "Acción, Lucha"
 	},
 	{
 		"id": 4,
-		"title": "EA SPORTS FC24",
-		"description": "El sucesor espiritual de la serie FIFA, desarrollado por EA Sports como su primer título bajo el nuevo nombre tras la separación de la licencia FIFA.",
-		"code": "easfc24",
-		"price": 6000,
-		"status": true,
-		"stock": 7,
-		"category": "Deportes"
+		"title": "GTA V",
+		"description": "Viaja y realiza todo tipo de actividades por Los Santos",
+		"code": "gtav",
+		"price": "5000",
+		"status": "on",
+		"stock": "22",
+		"category": "Mundo Abierto, Acción, +18"
+	},
+	{
+		"id": 5,
+		"title": "Assassin's creed odyssey",
+		"description": "Explora los alrededores del mundo más grande de toda la franquicia de este gran videojuego",
+		"code": "acd",
+		"price": "4500",
+		"status": "off",
+		"stock": "45",
+		"category": "Mundo Abierto, Acción"
+	},
+	{
+		"id": 6,
+		"title": "Fight Night Champion",
+		"description": "Conviértete en un campeón boxeador enfrentándote a toda clase de boxeadores ",
+		"code": "fnc",
+		"price": "1900",
+		"status": "on",
+		"stock": "22",
+		"category": "3200"
+	},
+	{
+		"id": 7,
+		"title": "Red Dead Redemption 2",
+		"description": "De los creadores de GTA, viaja por los alrededores del viejo oeste",
+		"code": "rdr2",
+		"price": "7000",
+		"status": "on",
+		"stock": "12",
+		"category": "Mundo Abierto, Acción, +18"
+	},
+	{
+		"id": 8,
+		"title": "Marvel Spider-Man",
+		"description": "Conviértete en uno de los más grandes héroes que haya existido y salva a New York ",
+		"code": "msm",
+		"price": "4500",
+		"status": "on",
+		"stock": "34",
+		"category": "Mundo Abierto, Acción"
+	},
+	{
+		"id": 9,
+		"title": "Mortal Kombat 1",
+		"description": "Combate contra los guerreros más fuertes y despiadados de esta gran franquicia",
+		"code": "mk1",
+		"price": "7000",
+		"status": "on",
+		"stock": "8",
+		"category": "Lucha, Acción, +18"
+	},
+	{
+		"id": 10,
+		"title": "World of Warcraft",
+		"description": "Viaja por todo este mundo de fantasía para poder realizar y experimentar aventuras",
+		"code": "wow",
+		"price": "4500",
+		"status": "on",
+		"stock": "27",
+		"category": "RPG, Mundo Abierto, Acción"
 	}
 ]

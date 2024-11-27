@@ -1,12 +1,13 @@
-<div>
-  <h1>Productos</h1>
-  {{#each products}}
-    <ul>Nombre:
-      {{this.title}}
-      <li>Descripcion: {{this.description}}</li>
-      <li>Precio: ${{this.price}}</li>
-      <li>Stock: {{this.stock}}</li>
-    </ul>
-
-  {{/each}}
-</div>
+<header>
+  <h1>Home - Productos</h1>
+</header>
+<main>
+  <section>
+    <h3>Productos</h3>
+    <div>
+      <ul id="productsList"></ul>
+    </div>
+    <button id="btnRefreshProductsList">Actualizar productos</button>
+  </section>
+</main>
+<script src="/api/public/js/products.js"></script>
