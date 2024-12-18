@@ -1,13 +1,24 @@
-<header>
-  <h1>Home - Productos</h1>
-</header>
+<center><header id="encabezadoProductos">
+    <h1>Home - Productos</h1>
+  </header></center>
 <main>
-  <section>
-    <h3>Productos</h3>
-    <div>
-      <ul id="productsList"></ul>
-    </div>
-    <button id="btnRefreshProductsList">Actualizar productos</button>
+  <section class="productos">
+    {{#each productList}}
+      <div class="producto">
+        <h2>{{this.title}}</h2>
+        <h3>${{this.price}}</h3>
+        <button><a
+            href={{this.linkProduct}}
+            class="detallesBoton"
+          >Detalles</a></button>
+        <button id={{this.id}}>Agregar al carrito</button>
+        <p>{{productLink}} </p>
+      </div>
+    {{/each}}
   </section>
+  <center>
+    <button id="carritoBoton"><a href="" id="linkCarrito">Ir al carrito</a></button>
+  </center>
+  <div>{{productPages}} </div>
 </main>
 <script src="/api/public/js/products.js"></script>

@@ -1,76 +1,162 @@
-import { readJsonFile, writeJsonFile } from "../utils/fileHandler.js";
-import { generateId } from "../utils/collectionHandler.js";
-import paths from "../utils/paths.js";
+import { isValidID } from "../config/mongooseConfig.js";
+import CartModel from "../models/cartModel.js";
 import ErrorManager from "./ErrorManager.js";
 
 export default class CartsManager {
-  #jsonFileName;
-  #carts;
+  #cartModel;
   constructor() {
-    this.#jsonFileName = "carts.json";
+    this.#cartModel = CartModel;
   }
-  async $findCartById(cid) {
-    this.#carts = await readJsonFile(paths.files, this.#jsonFileName);
-    const cartFound = this.#carts.find((cart) => cart.id === Number(cid));
-    if (!cartFound) {
-      throw new ErrorManager("Error, carrito no encontrado", 404);
+  async #findCartById(cid) {
+    if (!isValidID(cid)) {
+      throw new ErrorManager("ID inválido", 400);
     }
-    return cartFound;
+    const cart = await this.#cartModel
+      .findById(cid)
+      .populate("products.product");
+
+    if (!cart) {
+      throw new ErrorManager("ID no encontrado", 404);
+    }
+
+    return cart;
   }
-  async getAllCarts() {
+  async getAllCarts(params) {
     try {
-      this.#carts = await readJsonFile(paths.files, this.#jsonFileName);
-      return this.#carts;
+      const paginationOptions = {
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        populate: "products.product",
+        lean: true,
+      };
+
+      return await this.#cartModel.paginate({}, paginationOptions);
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
     }
   }
   async getCartById(cid) {
     try {
-      const cartFound = await this.$findCartById(cid);
-      return cartFound;
+      return await this.#findCartById(cid);
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
+    }
+  }
+  async getCartProduct(cid, pid) {
+    try {
+      const cart = await CartModel.findById(cid);
+      const productFound = cart.products.findIndex(
+        (item) => item.product._id == pid
+      );
+      const cartProduct = cart.products[productFound];
+      return cartProduct;
+    } catch (error) {
+      throw ErrorManager.handleError(error);
     }
   }
   async createCart(data) {
     try {
-      const products = data?.products?.map((item) => {
-        return { product: Number(item.product), quantity: 1 };
-      });
-      const cart = {
-        id: generateId(await this.getAllCarts()),
-        products: products ?? [],
-      };
-      this.#carts.push(cart);
-      await writeJsonFile(paths.files, this.#jsonFileName, this.#carts);
+      const cart = await this.#cartModel.create(data);
+      return cart;
+    } catch (error) {
+      throw ErrorManager.handleError(error);
+    }
+  }
+  async addProduct(cid, pid) {
+    try {
+      const cart = await this.#findCartById(cid);
+      const productIndex = cart.products.findIndex(
+        (item) => item.product._id.toString() === pid
+      );
+
+      if (productIndex >= 0) {
+        cart.products[productIndex].quantity++;
+      } else {
+        cart.products.push({ product: pid, quantity: 1 });
+      }
+
+      await cart.save();
+
       return cart;
     } catch (error) {
       throw new ErrorManager(error.message, error.code);
     }
   }
-  async addProduct(cid, pid) {
+  async updateProduct(cid, pid, data) {
     try {
-      const cartFound = await this.$findCartById(cid);
-      const productIndex = cartFound.products.findIndex(
-        (item) => item.product === Number(pid)
+      const cart = await this.#findCartById(cid);
+      const productIndex = cart.products.findIndex(
+        (item) => item.product._id.toString() === pid
       );
+      if (productIndex === -1) {
+        throw new ErrorManager("Producto no encontrado en el carrito", 404);
+      }
+      cart.products[productIndex].quantity = data.quantity;
+      cart.save();
+      return cart;
+    } catch (error) {
+      throw ErrorManager.handleError(error);
+    }
+  }
+  async updateCart(cid, products) {
+    try {
+      const cart = await this.#findCartById(cid);
 
-      if (productIndex >= 0) {
-        cartFound.products[productIndex].quantity++;
-      } else {
-        cartFound.products.push({ product: Number(pid), quantity: 1 });
+      if (!Array.isArray(products)) {
+        throw new ErrorManager(
+          "El formato de productos debe ser un arreglo",
+          400
+        );
       }
 
-      const indexCart = this.#carts.findIndex(
-        (item) => item.id === Number(cid)
-      );
-      this.#carts[indexCart] = cartFound;
-      await writeJsonFile(paths.files, this.#jsonFileName, this.#carts);
+      cart.products = products.map((item) => {
+        if (!item.product || !item.quantity) {
+          throw new ErrorManager(
+            "Cada producto debe incluir 'product' y 'quantity'",
+            400
+          );
+        }
+        return {
+          product: item.product,
+          quantity: item.quantity,
+        };
+      });
 
-      return cartFound;
+      await cart.save();
+
+      return cart;
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
+    }
+  }
+
+  async deleteProduct(cid, pid) {
+    try {
+      const cart = await this.#findCartById(cid);
+
+      const productIndex = cart.products.findIndex(
+        (item) => item.product._id.toString() === pid
+      );
+
+      if (productIndex === -1) {
+        throw new ErrorManager("Producto no encontrado en el carrito", 404);
+      }
+
+      cart.products.splice(productIndex, 1);
+
+      await cart.save();
+
+      return cart;
+    } catch (error) {
+      throw ErrorManager.handleError(error);
+    }
+  }
+  async deleteCart(cid) {
+    try {
+      const cart = await this.#findCartById(cid);
+      await cart.deleteOne();
+    } catch (error) {
+      throw ErrorManager.handleError(error);
     }
   }
 }

@@ -1,104 +1,119 @@
-import { readJsonFile, writeJsonFile } from "../utils/fileHandler.js";
-import { generateId } from "../utils/collectionHandler.js";
-import paths from "../utils/paths.js";
+import { isValidID } from "../config/mongooseConfig.js";
 import { convertToBoolean } from "../utils/converter.js";
 import ErrorManager from "./ErrorManager.js";
+import ProductModel from "../models/productsModel.js";
 
 export default class ProductsManager {
-  #jsonFileName;
-  #products;
+  #productsModel;
   constructor() {
-    this.#jsonFileName = "products.json";
+    this.#productsModel = ProductModel;
   }
-  async $findProductById(pid) {
-    this.#products;
-    const productFound = this.#products.find(
-      (product) => product.id === Number(pid)
-    );
-    if (!productFound) {
-      throw new ErrorManager("Error, producto no encontrado", 404);
+  async #findProductById(pid) {
+    if (!isValidID(pid)) {
+      throw new ErrorManager("ID inválido", 400);
     }
-    return productFound;
+    const product = await this.#productsModel.findById(pid);
+
+    if (!product) {
+      throw new ErrorManager("ID no encontrado", 404);
+    }
+
+    return product;
   }
-  async getAllProducts() {
+  async getAllProducts(params) {
     try {
-      this.#products = await readJsonFile(paths.files, this.#jsonFileName);
-      return this.#products;
+      const $and = [];
+
+      if (params?.category) {
+        $and.push({ category: { $regex: params.category, $options: "i" } });
+      }
+      const filters = $and.length > 0 ? { $and } : {};
+
+      const sort = {
+        asc: { price: 1 },
+        desc: { price: -1 },
+      };
+
+      const paginationOptions = {
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        sort: sort[params?.sort] ?? {},
+        lean: true,
+      };
+
+      const products = await this.#productsModel.paginate(
+        filters,
+        paginationOptions
+      );
+
+      const prevPageLink = products.hasPrevPage
+        ? `/api/products/?page=${products.prevPage}`
+        : null;
+      const nextPageLink = products.hasNextPage
+        ? `/api/products/?page=${products.nextPage}`
+        : null;
+
+      return {
+        docs: products.docs,
+        totalDocs: products.totalDocs,
+        limit: products.limit,
+        totalPages: products.totalPages,
+        page: products.page,
+        pagingCounter: products.pagingCounter,
+        hasPrevPage: products.hasPrevPage,
+        hasNextPage: products.hasNextPage,
+        prevPage: products.prevPage,
+        nextPage: products.nextPage,
+        prevPageLink,
+        nextPageLink,
+      };
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
     }
   }
   async getProductById(pid) {
     try {
-      const productFound = await this.$findProductById(pid);
-      return productFound;
+      return await this.#findProductById(pid);
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
     }
   }
   async createProduct(data) {
     try {
-      let { title, description, code, price, status, stock, category } = data;
-      if (!title || !description || !code || !price || !stock || !category) {
-        throw new ErrorManager("Error, faltan datos obligatorios", 400);
-      }
-      if (!status) {
-        status = true;
-      }
-      const product = {
-        id: generateId(await this.getAllProducts()),
-        title,
-        description,
-        code,
-        price,
-        status,
-        stock,
-        category,
-      };
-      this.#products.push(product);
-      await writeJsonFile(paths.files, this.#jsonFileName, this.#products);
+      const product = await this.#productsModel.create({
+        ...data,
+        status: convertToBoolean(data.status),
+      });
+
       return product;
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
     }
   }
   async updateProduct(pid, data) {
     try {
-      const { title, description, code, price, status, stock, category } = data;
-      const productFound = await this.$findProductById(pid);
-
-      const product = {
-        id: productFound.id,
-        title: title || productFound.title,
-        description: description || productFound.description,
-        code: code || productFound.code,
-        price: price ? Number(price) : productFound.price,
-        status: status ? convertToBoolean(status) : productFound.status,
-        stock: stock ? Number(stock) : productFound.stock,
-        category: category || productFound.category,
+      const product = await this.#findProductById(pid);
+      const newValues = {
+        ...product,
+        ...data,
+        status: data.status ? convertToBoolean(data.status) : product.status,
       };
-      const indexProduct = this.#products.findIndex(
-        (product) => product.id === Number(pid)
-      );
-      this.#products[indexProduct] = product;
-      await writeJsonFile(paths.files, this.#jsonFileName, this.#products);
+
+      product.set(newValues);
+      product.save();
+
       return product;
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
     }
   }
   async deleteProduct(pid) {
     try {
-      const indexProduct = this.#products.findIndex(
-        (product) => product.id === Number(pid)
-      );
-      if (indexProduct < 0) {
-        throw new ErrorManager("Error, el producto a eliminar no existe", 400);
-      }
-      this.#products.splice(indexProduct, 1);
-      await writeJsonFile(paths.files, this.#jsonFileName, this.#products);
+      const product = await this.#findProductById(pid);
+
+      await product.deleteOne();
     } catch (error) {
-      throw new ErrorManager(error.message, error.code);
+      throw ErrorManager.handleError(error);
     }
   }
 }

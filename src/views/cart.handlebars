@@ -1,0 +1,19 @@
+<header>
+  <h1>Carrito</h1>
+</header>
+<main>
+  <section>
+    <table class="tablaProductos">
+      <tr>
+        <td class="tdTitulo">Producto</td>
+        <td class="tdTitulo">Cantidad</td>
+      </tr>
+      {{#each listOfProducts}}
+        <tr>
+          <td>{{this.title}}</td>
+          <td>{{this.quantity}}</td>
+        </tr>
+      {{/each}}
+    </table>
+  </section>
+</main>
